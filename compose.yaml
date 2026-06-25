@@ -1,0 +1,414 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    security_opt:
+      - no-new-privileges:true
+      - apparmor:docker-secure
+    cap_drop:
+      - ALL
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana:rw
+    mem_limit: 512m
+    cpus: 0.5
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - main
+    env_file:
+      - /opt/docker/grafana/.env
+    environment:
+      - TZ=Europe/Berlin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_USERS_ALLOW_ORG_CREATE=false
+      - GF_SECURITY_DISABLE_GRAVATAR=true
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+      - GF_PLUGINS_ENABLE_ALPHA=false
+      - GF_ANALYTICS_FEEDBACK_LINKS_ENABLED=false
+      - GF_FEATURE_TOGGLES_ENABLE=
+      - GF_DATE_FORMATS_USE_BROWSER_LOCALE=true
+      - GF_SECURITY_COOKIE_SECURE=true
+      - GF_SECURITY_COOKIE_SAMESITE=strict
+      - GF_SERVER_PROTOCOL=http
+      - GF_SERVER_HTTP_PORT=3000
+      - GF_PLUGINS_PREINSTALL_SYNC=grafana-pyroscope-app
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,size=100m
+      - /var/log/grafana:rw,nosuid,size=50m
+    healthcheck:
+        test: ["CMD", "curl", "--silent", "--fail", "--insecure", "http://localhost:3000/login"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 10s
+
+  grafana-loki-read:
+    image: grafana/loki:latest
+    container_name: grafana-loki-read
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    command: "-config.file=/etc/loki/config.yaml -target=read"
+    ports:
+      - 3101:3100
+      - 7946
+      - 9095
+    volumes:
+      - ./loki-config.yaml:/etc/loki/config.yaml
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: [ "CMD", "/usr/bin/loki", "-health" ]
+      start_period: 30s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - main
+
+  grafana-loki-write:
+    image: grafana/loki:latest
+    container_name: grafana-loki-write
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    command: "-config.file=/etc/loki/config.yaml -target=write"
+    ports:
+      - 3102:3100
+      - 7946
+      - 9095
+    volumes:
+      - ./loki-config.yaml:/etc/loki/config.yaml
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: [ "CMD", "/usr/bin/loki", "-health" ]
+      start_period: 30s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - main
+
+  grafana-loki-ruler:
+    image: grafana/loki:latest
+    container_name: grafana-loki-ruler
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    command: "-config.file=/etc/loki/config.yaml -target=ruler"
+    ports:
+      - 3103:3100
+      - 7946
+      - 9095
+    volumes:
+      - ./loki-config.yaml:/etc/loki/config.yaml
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: [ "CMD", "/usr/bin/loki", "-health" ]
+      start_period: 30s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - main
+
+  grafana-loki:
+    image: grafana/loki:latest
+    container_name: grafana-loki
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - ./loki-config.yaml:/etc/loki/config.yaml
+    restart: unless-stopped
+    ports:
+      - "3100"
+      - "7946"
+    command: "-config.file=/etc/loki/config.yaml -target=backend -legacy-read-mode=false"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: [ "CMD", "/usr/bin/loki", "-health" ]
+      start_period: 30s
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - main
+
+  grafana-loki-gateway:
+    image: nginx:latest
+    container_name: grafana-loki-gateway
+    restart: unless-stopped
+    depends_on:
+      - grafana-loki-read
+      - grafana-loki-write
+    security_opt:
+      - no-new-privileges:true
+    # cap_drop:
+    #   - ALL
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        cat <<EOF > /etc/nginx/nginx.conf
+        user  nginx;
+        worker_processes  5;  ## Default: 1
+
+        events {
+          worker_connections   1000;
+        }
+
+        http {
+          resolver 127.0.0.11;
+
+          server {
+            listen             3100;
+
+            location = / {
+              return 200 'OK';
+              auth_basic off;
+            }
+
+            location = /api/prom/push {
+              proxy_pass       http://grafana-loki-write:3100\$$request_uri;
+            }
+
+            location = /api/prom/tail {
+              proxy_pass       http://grafana-loki-read:3100\$$request_uri;
+              proxy_set_header Upgrade \$$http_upgrade;
+              proxy_set_header Connection "upgrade";
+            }
+
+            location ~ /api/prom/.* {
+              proxy_pass       http://grafana-loki-read:3100\$$request_uri;
+            }
+
+            location = /loki/api/v1/push {
+              proxy_pass       http://grafana-loki-write:3100\$$request_uri;
+            }
+
+            location = /loki/api/v1/tail {
+              proxy_pass       http://grafana-loki-read:3100\$$request_uri;
+              proxy_set_header Upgrade \$$http_upgrade;
+              proxy_set_header Connection "upgrade";
+            }
+
+            location ~ /loki/api/.* {
+              proxy_pass       http://grafana-loki-read:3100\$$request_uri;
+            }
+            location ~ /prometheus/.* {
+              proxy_pass http://grafana-loki-ruler:3100$request_uri;
+            }
+
+            location ~ /loki/api/v1/rules.* {
+              proxy_pass http://grafana-loki-ruler:3100$request_uri;
+            }
+
+            location = /loki/api/v1/alerts {
+              proxy_pass http://grafana-loki-ruler:3100$request_uri;
+            }
+          }
+        }
+        EOF
+        /docker-entrypoint.sh nginx -g "daemon off;"
+    ports:
+      - "3100:3100"    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "service", "nginx", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - main
+
+  grafana-alloy:
+    image: grafana/alloy:latest
+    container_name: grafana-alloy
+    security_opt:
+      - seccomp=unconfined
+    restart: unless-stopped
+    volumes:
+      - ./alloy-local-config.yaml:/etc/alloy/config.alloy:ro
+    command:  run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    ports:
+      - 3400:3400
+      - 3500:3500
+      - 3510:3510
+      - 3511:3511
+      - 12345:12345
+      - 12346:12346
+      - 12347:12347
+      - 12348:12348
+    depends_on:
+      - grafana-loki-gateway
+    networks:
+      - main
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "true"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+
+  grafana-tempo:
+    image: grafana/tempo:latest
+    container_name: grafana-tempo
+    security_opt:
+      - no-new-privileges:true
+    command: [ "-config.file=/etc/tempo/tempo.yaml" ]
+    volumes:
+      - ./tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - grafana-tempo:/var/tempo/traces
+    ports:
+      - "3200:3200"   # Tempo API
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    restart: unless-stopped
+    networks:
+      - main
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "/tempo", "-version"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  grafana-mimir:
+    image: grafana/mimir:latest
+    container_name: grafana-mimir
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    ports:
+      - "9009:9009"   # HTTP (query + push endpoint)
+      - "9095:9095"   # gRPC (internal, can omit exposing if not needed)
+    volumes:
+      - ./mimir.yml:/etc/mimir/mimir.yml:ro
+      - mimir-data:/data:rw   # local WAL / cache
+    mem_limit: 2g
+    cpus: 1.0
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - main
+    environment:
+      - TZ=Europe/Berlin
+    command:
+      - '--config.file=/etc/mimir/mimir.yml'
+    tmpfs:
+      - /tmp:rw,nosuid,size=100m
+    healthcheck:
+      test: ["CMD", "/bin/mimir", "-version"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  grafana-pyroscope:
+    image: grafana/pyroscope:latest
+    container_name: grafana-pyroscope
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./pyroscope.yaml:/etc/pyroscope/config.yaml:ro
+      - pyroscope-data:/var/pyroscope:rw
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - main
+    environment:
+      - TZ=Europe/Berlin
+    healthcheck:
+      test: ["CMD", "/usr/bin/pyroscope", "-version"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+networks:
+  main:
+    external: true
+
+volumes:
+  grafana-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind,rw
+      device: /opt/docker/grafana/volumes/data
+  grafana-tempo:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind,rw
+      device: /opt/docker/grafana/volumes/tempo
+  mimir-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind,rw
+      device: /opt/docker/grafana/volumes/mimir-data
+  pyroscope-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind,rw
+      device: /opt/docker/grafana/volumes/pyroscope-data

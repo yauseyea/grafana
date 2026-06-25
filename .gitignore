@@ -1,0 +1,7 @@
+volumes
+.env
+alloy-local-config.yaml
+loki-config.yaml
+mimir.yml
+pyroscope.yaml
+tempo.yaml
