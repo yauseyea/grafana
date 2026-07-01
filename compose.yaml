@@ -1,6 +1,6 @@
 services:
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.6.16
     container_name: grafana
     security_opt:
       - no-new-privileges:true
@@ -51,7 +51,7 @@ services:
         start_period: 10s
 
   grafana-loki-read:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.3
     container_name: grafana-loki-read
     security_opt:
       - no-new-privileges:true
@@ -63,7 +63,7 @@ services:
       - 7946
       - 9095
     volumes:
-      - ./loki-config.yaml:/etc/loki/config.yaml
+      - /opt/docker/grafana/loki-config.yaml:/etc/loki/config.yaml
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -80,7 +80,7 @@ services:
       - main
 
   grafana-loki-write:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.3
     container_name: grafana-loki-write
     security_opt:
       - no-new-privileges:true
@@ -92,7 +92,7 @@ services:
       - 7946
       - 9095
     volumes:
-      - ./loki-config.yaml:/etc/loki/config.yaml
+      - /opt/docker/grafana/loki-config.yaml:/etc/loki/config.yaml
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -109,7 +109,7 @@ services:
       - main
 
   grafana-loki-ruler:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.3
     container_name: grafana-loki-ruler
     security_opt:
       - no-new-privileges:true
@@ -121,7 +121,7 @@ services:
       - 7946
       - 9095
     volumes:
-      - ./loki-config.yaml:/etc/loki/config.yaml
+      - /opt/docker/grafana/loki-config.yaml:/etc/loki/config.yaml
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -138,14 +138,14 @@ services:
       - main
 
   grafana-loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.3
     container_name: grafana-loki
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
     volumes:
-      - ./loki-config.yaml:/etc/loki/config.yaml
+      - /opt/docker/grafana/loki-config.yaml:/etc/loki/config.yaml
     restart: unless-stopped
     ports:
       - "3100"
@@ -166,7 +166,7 @@ services:
       - main
 
   grafana-loki-gateway:
-    image: nginx:latest
+    image: nginx:1.31.2
     container_name: grafana-loki-gateway
     restart: unless-stopped
     depends_on:
@@ -257,13 +257,13 @@ services:
       - main
 
   grafana-alloy:
-    image: grafana/alloy:latest
+    image: grafana/alloy:v1.17.1
     container_name: grafana-alloy
     security_opt:
       - seccomp=unconfined
     restart: unless-stopped
     volumes:
-      - ./alloy-local-config.yaml:/etc/alloy/config.alloy:ro
+      - /opt/docker/grafana/alloy-local-config.yaml:/etc/alloy/config.alloy:ro
     command:  run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
     ports:
       - 3400:3400
@@ -291,13 +291,13 @@ services:
       start_period: 20s
 
   grafana-tempo:
-    image: grafana/tempo:latest
+    image: grafana/tempo:2.10.7
     container_name: grafana-tempo
     security_opt:
       - no-new-privileges:true
     command: [ "-config.file=/etc/tempo/tempo.yaml" ]
     volumes:
-      - ./tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - /opt/docker/grafana/tempo.yaml:/etc/tempo/tempo.yaml:ro
       - grafana-tempo:/var/tempo/traces
     ports:
       - "3200:3200"   # Tempo API
@@ -319,7 +319,7 @@ services:
       start_period: 10s
 
   grafana-mimir:
-    image: grafana/mimir:latest
+    image: grafana/mimir:3.1.2
     container_name: grafana-mimir
     security_opt:
       - no-new-privileges:true
@@ -329,7 +329,7 @@ services:
       - "9009:9009"   # HTTP (query + push endpoint)
       - "9095:9095"   # gRPC (internal, can omit exposing if not needed)
     volumes:
-      - ./mimir.yml:/etc/mimir/mimir.yml:ro
+      - /opt/docker/grafana/mimir.yml:/etc/mimir/mimir.yml:ro
       - mimir-data:/data:rw   # local WAL / cache
     mem_limit: 2g
     cpus: 1.0
@@ -355,7 +355,7 @@ services:
       start_period: 30s
 
   grafana-pyroscope:
-    image: grafana/pyroscope:latest
+    image: grafana/pyroscope:2.0.5
     container_name: grafana-pyroscope
     security_opt:
       - no-new-privileges:true
@@ -364,7 +364,7 @@ services:
     ports:
       - "4040:4040"
     volumes:
-      - ./pyroscope.yaml:/etc/pyroscope/config.yaml:ro
+      - /opt/docker/grafana/pyroscope.yaml:/etc/pyroscope/config.yaml:ro
       - pyroscope-data:/var/pyroscope:rw
     restart: unless-stopped
     logging:
