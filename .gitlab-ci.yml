@@ -1,0 +1,14 @@
+stages:
+  - deploy
+
+include:
+  - project: 'internal/ci-templates'
+    ref: main
+    file: 'docker-deploy.yml'
+
+variables:
+  TARGET_HOST: docker-admin
+  APP: grafana
+  OWNER: andrei
+  FILE_LIST: ".env .git .gitignore .gitlab-ci.yml compose.yaml renovate.json"
+  BRANCH: main
