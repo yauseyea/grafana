@@ -15,7 +15,7 @@
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
       "automergeType": "branch",
-      "requiredStatusChecks": null
+      "ignoreTests": true
     },
     {
       "description": "Automerge",
@@ -24,7 +24,7 @@
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
       "automergeType": "branch",
-      "requiredStatusChecks": null
+      "ignoreTests": true
     },
     {
       "description": "Automerge",
@@ -33,7 +33,7 @@
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
       "automergeType": "branch",
-      "requiredStatusChecks": null
+      "ignoreTests": true
     },
     {
       "description": "Automerge",
@@ -42,7 +42,7 @@
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
       "automergeType": "branch",
-      "requiredStatusChecks": null
+      "ignoreTests": true
     },
     {
       "description": "Automerge",
@@ -51,7 +51,7 @@
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
       "automergeType": "branch",
-      "requiredStatusChecks": null
+      "ignoreTests": true
     },
     {
       "description": "Automerge",
@@ -60,7 +60,7 @@
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
       "automergeType": "branch",
-      "requiredStatusChecks": null
+      "ignoreTests": true
     },
     {
       "description": "Automerge",
@@ -69,7 +69,7 @@
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
       "automergeType": "branch",
-      "requiredStatusChecks": null
+      "ignoreTests": true
     }
   ]
 }
