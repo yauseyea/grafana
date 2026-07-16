@@ -166,7 +166,7 @@ services:
       - main
 
   grafana-loki-gateway:
-    image: nginx:1.31.3@sha256:8b1903d1d65ca63882c3c567da1b77181863bbb9b2499859c7dea2b9ab3a4795
+    image: nginx:1.31.3@sha256:5a88c9c45479443d7be2eadc894b4ed0a9801bae03d97a5760ae13b5c2005942
     container_name: grafana-loki-gateway
     restart: unless-stopped
     depends_on:
@@ -319,7 +319,7 @@ services:
       start_period: 10s
 
   grafana-mimir:
-    image: grafana/mimir:3.1.2@sha256:39cc23910bbaa60d0280fd162265a22c39120ff61b02bc993f3fd3701fb8606d
+    image: grafana/mimir:3.1.3@sha256:c906a6fc334ba401b901230b34f660cb1bb1818ef1b169d90e7e4033b97c4f59
     container_name: grafana-mimir
     security_opt:
       - no-new-privileges:true
