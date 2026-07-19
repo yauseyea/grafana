@@ -1,14 +1,22 @@
 stages:
   - deploy
+  - mirror
 
 include:
   - project: 'internal/ci-templates'
     ref: main
     file: 'docker-deploy.yml'
+  - project: 'internal/ci-templates'
+    ref: main
+    file: 'mirror-to-github.yml'
+  - project: 'internal/ci-templates'
+    ref: main
+    file: 'mirror-to-github.yml'
 
 variables:
   TARGET_HOST: docker-admin
   APP: grafana
   OWNER: andrei
-  FILE_LIST: ".env .git .gitignore .gitlab-ci.yml compose.yaml renovate.json"
+  FILE_LIST: ".env .git .gitignore .gitlab-ci.yml compose.yaml renovate.json LICENSE readme.md"
   BRANCH: main
+  HTTPS_REPO: github.com/yauseyea/grafana.git
