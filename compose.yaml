@@ -51,7 +51,7 @@ services:
         start_period: 10s
 
   grafana-loki-read:
-    image: grafana/loki:3.7.3@sha256:70b9f699fc9bb868b62f1cfd4f787dfa50242f1fd92e6089787d5d7daea75fe8
+    image: grafana/loki:3.7.4@sha256:87f0a067673756a3cede1bcbf0c74875f7df9b09fddb53e399d0c576f756cfcc
     container_name: grafana-loki-read
     security_opt:
       - no-new-privileges:true
@@ -80,7 +80,7 @@ services:
       - main
 
   grafana-loki-write:
-    image: grafana/loki:3.7.3@sha256:70b9f699fc9bb868b62f1cfd4f787dfa50242f1fd92e6089787d5d7daea75fe8
+    image: grafana/loki:3.7.4@sha256:87f0a067673756a3cede1bcbf0c74875f7df9b09fddb53e399d0c576f756cfcc
     container_name: grafana-loki-write
     security_opt:
       - no-new-privileges:true
@@ -109,7 +109,7 @@ services:
       - main
 
   grafana-loki-ruler:
-    image: grafana/loki:3.7.3@sha256:70b9f699fc9bb868b62f1cfd4f787dfa50242f1fd92e6089787d5d7daea75fe8
+    image: grafana/loki:3.7.4@sha256:87f0a067673756a3cede1bcbf0c74875f7df9b09fddb53e399d0c576f756cfcc
     container_name: grafana-loki-ruler
     security_opt:
       - no-new-privileges:true
@@ -138,7 +138,7 @@ services:
       - main
 
   grafana-loki:
-    image: grafana/loki:3.7.3@sha256:70b9f699fc9bb868b62f1cfd4f787dfa50242f1fd92e6089787d5d7daea75fe8
+    image: grafana/loki:3.7.4@sha256:87f0a067673756a3cede1bcbf0c74875f7df9b09fddb53e399d0c576f756cfcc
     container_name: grafana-loki
     security_opt:
       - no-new-privileges:true
