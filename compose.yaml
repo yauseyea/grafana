@@ -257,7 +257,7 @@ services:
       - main
 
   grafana-alloy:
-    image: grafana/alloy:v1.18.0@sha256:491b0578c04983fd54fe99b587b6fab4404dc46d0dc16677bd6b00cc1140b308
+    image: grafana/alloy:v1.18.1@sha256:0f4434c92b3e6cdac38bb129b344e1790c246f7b6e2eaffcc16a5fa363240e33
     container_name: grafana-alloy
     security_opt:
       - seccomp=unconfined
@@ -355,7 +355,7 @@ services:
       start_period: 30s
 
   grafana-pyroscope:
-    image: grafana/pyroscope:2.2.0@sha256:7f019d866e474609c7f112d2632d75bdf8ad418c08461fcb5193444bb6dc476d
+    image: grafana/pyroscope:2.2.1@sha256:70cf34fcb09d286080df909c33a95432df2a78ed4f6613b5e998ac17f90e4c3d
     container_name: grafana-pyroscope
     security_opt:
       - no-new-privileges:true
