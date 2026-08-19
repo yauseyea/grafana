@@ -319,7 +319,7 @@ services:
       start_period: 10s
 
   grafana-mimir:
-    image: grafana/mimir:3.1.4@sha256:ea395743a08cc1f41ede12a7264613cb32f0268bbda6277f12a5929b71625a41
+    image: grafana/mimir:3.2.0@sha256:736f7459913d262444e70813565e3ca24b64dce24343da20af554ae6ee5268e8
     container_name: grafana-mimir
     security_opt:
       - no-new-privileges:true
