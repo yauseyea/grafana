@@ -166,7 +166,7 @@ services:
       - main
 
   grafana-loki-gateway:
-    image: nginx:1.31.6@sha256:fd3d3f71bb0786f6af087db3e44e3cc5cdc5e3eca41f9646af23bbc7bc789376
+    image: nginx:1.31.6@sha256:908dc23e643a1447dbfb2e189ed268bfde6a51a5bf9a34d3dd3440a24f58ccf7
     container_name: grafana-loki-gateway
     restart: unless-stopped
     depends_on:
