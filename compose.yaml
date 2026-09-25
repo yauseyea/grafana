@@ -1,10 +1,10 @@
 services:
   grafana:
-    image: grafana/grafana:13.2.2@sha256:ac461fb352abc50da10a51c7d02462e9c05488f11f53f14b3ad79a8145f638a0
+    image: grafana/grafana:13.1.0
     container_name: grafana
     security_opt:
       - no-new-privileges:true
-      - apparmor:docker-secure
+#      - apparmor:docker-secure
     cap_drop:
       - ALL
     ports:
@@ -51,7 +51,7 @@ services:
         start_period: 10s
 
   grafana-loki-read:
-    image: grafana/loki:3.7.8@sha256:1107dd5274e0ada47e42472b7a7e71f3b2a2fe878878108f3e2f9e51528f0193
+    image: grafana/loki:3.7.3
     container_name: grafana-loki-read
     security_opt:
       - no-new-privileges:true
@@ -80,7 +80,7 @@ services:
       - main
 
   grafana-loki-write:
-    image: grafana/loki:3.7.8@sha256:1107dd5274e0ada47e42472b7a7e71f3b2a2fe878878108f3e2f9e51528f0193
+    image: grafana/loki:3.7.3
     container_name: grafana-loki-write
     security_opt:
       - no-new-privileges:true
@@ -109,7 +109,7 @@ services:
       - main
 
   grafana-loki-ruler:
-    image: grafana/loki:3.7.8@sha256:1107dd5274e0ada47e42472b7a7e71f3b2a2fe878878108f3e2f9e51528f0193
+    image: grafana/loki:3.7.3
     container_name: grafana-loki-ruler
     security_opt:
       - no-new-privileges:true
@@ -138,7 +138,7 @@ services:
       - main
 
   grafana-loki:
-    image: grafana/loki:3.7.8@sha256:1107dd5274e0ada47e42472b7a7e71f3b2a2fe878878108f3e2f9e51528f0193
+    image: grafana/loki:3.7.3
     container_name: grafana-loki
     security_opt:
       - no-new-privileges:true
@@ -166,7 +166,7 @@ services:
       - main
 
   grafana-loki-gateway:
-    image: nginx:1.31.6@sha256:908dc23e643a1447dbfb2e189ed268bfde6a51a5bf9a34d3dd3440a24f58ccf7
+    image: nginx:1.31.2
     container_name: grafana-loki-gateway
     restart: unless-stopped
     depends_on:
@@ -257,7 +257,7 @@ services:
       - main
 
   grafana-alloy:
-    image: grafana/alloy:v1.19.2@sha256:b8ec653c44235fbe910879145dac3597d66b0aaecf60bcbbe82580767771a839
+    image: grafana/alloy:v1.17.1
     container_name: grafana-alloy
     security_opt:
       - seccomp=unconfined
@@ -291,7 +291,7 @@ services:
       start_period: 20s
 
   grafana-tempo:
-    image: grafana/tempo:3.0.3@sha256:0296560ac66f8a3600d7fb3014a52c189d4d9c3549ad6ff441bf2409855d68d5
+    image: grafana/tempo:3.0.2
     container_name: grafana-tempo
     security_opt:
       - no-new-privileges:true
@@ -319,7 +319,7 @@ services:
       start_period: 10s
 
   grafana-mimir:
-    image: grafana/mimir:3.2.1@sha256:92838f113ba54230014e79bc812e57ca90bb9ebc06e665f59e4f700098c2dd04
+    image: grafana/mimir:3.1.2
     container_name: grafana-mimir
     security_opt:
       - no-new-privileges:true
@@ -355,7 +355,7 @@ services:
       start_period: 30s
 
   grafana-pyroscope:
-    image: grafana/pyroscope:2.3.1@sha256:86a9ee7448487409ead8ada78789de7b78b739711b92b5d7224a1a54abf3eeb2
+    image: grafana/pyroscope:2.1.0
     container_name: grafana-pyroscope
     security_opt:
       - no-new-privileges:true
