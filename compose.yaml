@@ -43,6 +43,7 @@ services:
     tmpfs:
       - /tmp:rw,nosuid,size=100m
       - /var/log/grafana:rw,nosuid,size=50m
+      - /usr/share/grafana/data/plugins-bundled:rw,nosuid,size=200m
     healthcheck:
         test: ["CMD", "curl", "--silent", "--fail", "--insecure", "http://localhost:3000/login"]
         interval: 30s
