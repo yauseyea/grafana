@@ -258,7 +258,7 @@ services:
       - main
 
   grafana-alloy:
-    image: grafana/alloy:v1.19.2
+    image: grafana/alloy:v1.20.0
     container_name: grafana-alloy
     security_opt:
       - seccomp=unconfined
