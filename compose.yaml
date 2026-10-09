@@ -356,7 +356,7 @@ services:
       start_period: 30s
 
   grafana-pyroscope:
-    image: grafana/pyroscope:2.3.2
+    image: grafana/pyroscope:2.4.0
     container_name: grafana-pyroscope
     security_opt:
       - no-new-privileges:true
