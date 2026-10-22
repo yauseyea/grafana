@@ -320,7 +320,7 @@ services:
       start_period: 10s
 
   grafana-mimir:
-    image: grafana/mimir:3.2.2
+    image: grafana/mimir:3.2.3
     container_name: grafana-mimir
     security_opt:
       - no-new-privileges:true
