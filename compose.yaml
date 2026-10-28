@@ -1,6 +1,6 @@
 services:
   grafana:
-    image: grafana/grafana:13.3.0
+    image: grafana/grafana:13.3.0@sha256:488984b716c0862639f91a698adbe2862677a5a07bad42da5f03f3030883b205
     container_name: grafana
     security_opt:
       - no-new-privileges:true
@@ -52,7 +52,7 @@ services:
         start_period: 10s
 
   grafana-loki-read:
-    image: grafana/loki:3.7.9
+    image: grafana/loki:3.7.9@sha256:0db216b630ae1f348a1584c67f3cead8b4c1fc839169a39501db664744158e28
     container_name: grafana-loki-read
     security_opt:
       - no-new-privileges:true
@@ -81,7 +81,7 @@ services:
       - main
 
   grafana-loki-write:
-    image: grafana/loki:3.7.9
+    image: grafana/loki:3.7.9@sha256:0db216b630ae1f348a1584c67f3cead8b4c1fc839169a39501db664744158e28
     container_name: grafana-loki-write
     security_opt:
       - no-new-privileges:true
@@ -110,7 +110,7 @@ services:
       - main
 
   grafana-loki-ruler:
-    image: grafana/loki:3.7.9
+    image: grafana/loki:3.7.9@sha256:0db216b630ae1f348a1584c67f3cead8b4c1fc839169a39501db664744158e28
     container_name: grafana-loki-ruler
     security_opt:
       - no-new-privileges:true
@@ -139,7 +139,7 @@ services:
       - main
 
   grafana-loki:
-    image: grafana/loki:3.7.9
+    image: grafana/loki:3.7.9@sha256:0db216b630ae1f348a1584c67f3cead8b4c1fc839169a39501db664744158e28
     container_name: grafana-loki
     security_opt:
       - no-new-privileges:true
@@ -167,7 +167,7 @@ services:
       - main
 
   grafana-loki-gateway:
-    image: nginx:1.31.8
+    image: nginx:1.31.8@sha256:c4d1df1ca40ef8cf932f19853f00eb0f81ffe5becda1256365bbf0a057060ffb
     container_name: grafana-loki-gateway
     restart: unless-stopped
     depends_on:
@@ -258,7 +258,7 @@ services:
       - main
 
   grafana-alloy:
-    image: grafana/alloy:v1.21.2
+    image: grafana/alloy:v1.21.2@sha256:89a5a320168387336b9ac3c850609c3ba7757eadd4ae5f1d819deb35e9854b18
     container_name: grafana-alloy
     security_opt:
       - seccomp=unconfined
@@ -292,7 +292,7 @@ services:
       start_period: 20s
 
   grafana-tempo:
-    image: grafana/tempo:3.1.1
+    image: grafana/tempo:3.1.1@sha256:64e2fbd56d9c2b3412a4b430a58ea59e91a670b1e75f920a0c702213ad145044
     container_name: grafana-tempo
     security_opt:
       - no-new-privileges:true
@@ -320,7 +320,7 @@ services:
       start_period: 10s
 
   grafana-mimir:
-    image: grafana/mimir:3.2.3
+    image: grafana/mimir:3.2.3@sha256:0ed56db7d7713707eff00224ddd4c3096afa6cf1cbe43a6f9391c537f1416099
     container_name: grafana-mimir
     security_opt:
       - no-new-privileges:true
@@ -356,7 +356,7 @@ services:
       start_period: 30s
 
   grafana-pyroscope:
-    image: grafana/pyroscope:2.4.2
+    image: grafana/pyroscope:2.4.2@sha256:ef9b48976386aa2781e84664dfdba7cc33a1b6793c0cc9d130812173a926ca1f
     container_name: grafana-pyroscope
     security_opt:
       - no-new-privileges:true
