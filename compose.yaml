@@ -413,5 +413,3 @@ volumes:
       type: none
       o: bind,rw
       device: /opt/docker/grafana/volumes/pyroscope-data
-
-# Remove this
