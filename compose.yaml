@@ -4,7 +4,6 @@ services:
     container_name: grafana
     security_opt:
       - no-new-privileges:true
-#      - apparmor:docker-secure
     cap_drop:
       - ALL
     ports:
@@ -175,8 +174,6 @@ services:
       - grafana-loki-write
     security_opt:
       - no-new-privileges:true
-    # cap_drop:
-    #   - ALL
     entrypoint:
       - sh
       - -euc
